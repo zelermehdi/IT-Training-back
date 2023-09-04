@@ -1,0 +1,10 @@
+package com.fil.rouge.Repository;
+
+import com.fil.rouge.models.SousTheme;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface SousThemeRepository extends JpaRepository<SousTheme, Long> {
+}
