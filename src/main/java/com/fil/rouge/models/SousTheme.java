@@ -1,6 +1,6 @@
 package com.fil.rouge.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // Importez cette annotation
 
 import jakarta.persistence.*;
@@ -21,7 +21,7 @@ public class SousTheme {
     @Size(max = 1000)
     private String description;
 
-    @JsonManagedReference
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "themeID")
     @JsonIgnoreProperties("sousThemes") 
