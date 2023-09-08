@@ -17,7 +17,6 @@ public class FormationController {
     @Autowired
     private FormationRepository formationRepository;
 
-
     @GetMapping
     public List<Formation> getAllFormations() {
         return formationRepository.findAll();

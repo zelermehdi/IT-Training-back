@@ -1,14 +1,15 @@
 package com.fil.rouge.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 
 @Entity
-@Table(name = "themes")
-public class Theme {
+@Table(name = "Domaine")
+public class Domaine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -23,18 +24,16 @@ public class Theme {
     @Column(name = "description", length = 1000)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "domaine_id") // Utilisez le nom correct de la colonne
-    @JsonIgnoreProperties("themes")
-    private Domaine domaine;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "domaine", cascade = CascadeType.ALL)
+    private List<Theme> themes;
 
-    public Theme() {
+    public Domaine() {
     }
 
-    public Theme(String nom, String description, Domaine domaine) {
+    public Domaine(String nom, String description) {
         this.nom = nom;
         this.description = description;
-        this.domaine = domaine;
     }
 
     public Long getId() {
@@ -61,11 +60,11 @@ public class Theme {
         this.description = description;
     }
 
-    public Domaine getDomaine() {
-        return domaine;
+    public List<Theme> getThemes() {
+        return themes;
     }
 
-    public void setDomaine(Domaine domaine) {
-        this.domaine = domaine;
+    public void setThemes(List<Theme> themes) {
+        this.themes = themes;
     }
 }

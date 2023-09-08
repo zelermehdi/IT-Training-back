@@ -1,4 +1,4 @@
-package com.fil.rouge.models; 
+package com.fil.rouge.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -12,46 +12,54 @@ import java.util.List;
 public class Formation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long formationId;
+    @Column(name = "ID")
+    private Long id;
 
     @NotBlank
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "nom", length = 255)
     private String nom;
 
     @Size(max = 1000)
-    @Column(length = 1000)
+    @Column(name = "description", length = 1000)
     private String description;
 
+    @Column(name = "prix")
     private double prix;
 
+    @Column(name = "durée")
     private int duree;
 
     @Size(max = 1000)
-    @Column(length = 1000)
+    @Column(name = "prérequis", length = 1000)
     private String prerequis;
 
-    @JsonManagedReference 
+    @ManyToOne
+    @JoinColumn(name = "theme_id") 
+    private Theme theme;
+
+    @JsonManagedReference
     @OneToMany(mappedBy = "formation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SessionFormation> sessions;
 
     public Formation() {
     }
 
-    public Formation(String nom, String description, double prix, int duree, String prerequis) {
+    public Formation(String nom, String description, double prix, int duree, String prerequis, Theme theme) {
         this.nom = nom;
         this.description = description;
         this.prix = prix;
         this.duree = duree;
         this.prerequis = prerequis;
+        this.theme = theme;
     }
 
-    public Long getFormationId() {
-        return formationId;
+    public Long getId() {
+        return id;
     }
 
-    public void setFormationId(Long formationId) {
-        this.formationId = formationId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNom() {
@@ -92,6 +100,14 @@ public class Formation {
 
     public void setPrerequis(String prerequis) {
         this.prerequis = prerequis;
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
     public List<SessionFormation> getSessions() {

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/themes")
+@RequestMapping("/themes") 
 public class ThemeController {
     @Autowired
     private ThemeRepository themeRepository;
@@ -21,8 +21,14 @@ public class ThemeController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Theme> getThemeById(@PathVariable Long id) {
-        return themeRepository.findById(id);
+    public ResponseEntity<Theme> getThemeById(@PathVariable Long id) {
+        Optional<Theme> theme = themeRepository.findById(id);
+
+        if (theme.isPresent()) {
+            return ResponseEntity.ok(theme.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -31,15 +37,17 @@ public class ThemeController {
     }
 
     @PutMapping("/{id}")
-    public Theme updateTheme(@PathVariable Long id, @RequestBody Theme updatedTheme) {
+    public ResponseEntity<Theme> updateTheme(@PathVariable Long id, @RequestBody Theme updatedTheme) {
         Optional<Theme> existingTheme = themeRepository.findById(id);
+
         if (existingTheme.isPresent()) {
             Theme theme = existingTheme.get();
             theme.setNom(updatedTheme.getNom());
             theme.setDescription(updatedTheme.getDescription());
-            return themeRepository.save(theme);
+            return ResponseEntity.ok(themeRepository.save(theme));
+        } else {
+            return ResponseEntity.notFound().build();
         }
-        return null; 
     }
 
     @DeleteMapping("/{id}")
@@ -47,7 +55,7 @@ public class ThemeController {
         themeRepository.deleteById(id);
     }
     
-    @GetMapping("/{id}/sousthemes")
+    @GetMapping("/{id}/themes")
     public ResponseEntity<Theme> getThemeWithSousThemes(@PathVariable Long id) {
         Optional<Theme> theme = themeRepository.findById(id);
 
@@ -58,6 +66,4 @@ public class ThemeController {
             return ResponseEntity.notFound().build();
         }
     }
-    
-    
 }
