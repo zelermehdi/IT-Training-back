@@ -71,15 +71,15 @@ public class SecurityController {
 	        try {
 	            User existingUser = userservice.findUserByUsername(newUser.getUsername());
 	            if (existingUser != null) {
-	                return ResponseEntity.badRequest().body("User already exists.");
+	                return ResponseEntity.badRequest().body("L'utilisateur existe déjà.");
 	            }
 
 	            userservice.insertUser(newUser);
 
 
-	            return ResponseEntity.ok("User created successfully");
+	            return ResponseEntity.ok("Utilisateur créé avec succès");
 	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating the user.");
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
 	        }
 	    }
 	 
