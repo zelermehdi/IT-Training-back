@@ -64,4 +64,15 @@ public class GestionUserDao {
 	 * this.roleRepository.findRoleByRole(role); }
 	 */
 
+	public void createUser(AppUser newUser) {
+	    // 1. Encodez le mot de passe de l'utilisateur
+	    String encodedPassword = passwordEncoder.encode(newUser.getPassword());
+	    newUser.setPassword(encodedPassword);
+	    
+	    // 2. Enregistrez l'utilisateur dans la base de données
+	    userRepository.save(newUser);
+	}
+
+	
+	
 }

@@ -3,24 +3,29 @@ package com.fil.rouge.controllers;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.CloseableThreadContext.Instance;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fil.rouge.models.AppUser;
+import com.fil.rouge.models.Candidat;
+import com.fil.rouge.models.User;
+import com.fil.rouge.services.GestionUserDao;
+import com.fil.rouge.services.Userservice;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,6 +34,10 @@ public class SecurityController {
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private JwtEncoder jwtEncoder;
+	 @Autowired
+	    private GestionUserDao gestionUserDao;
+	 @Autowired
+	 private Userservice userservice;
 	
 	@PostMapping("/login")
 	public Map<String, String> login(String username,String password){
@@ -57,5 +66,22 @@ public class SecurityController {
 	
 		return Map.of("access-token",jwt);
 	}
+	 @PostMapping("/create-user")
+	    public ResponseEntity<String> createUser(@RequestBody User newUser) {
+	        try {
+	            User existingUser = userservice.findUserByUsername(newUser.getUsername());
+	            if (existingUser != null) {
+	                return ResponseEntity.badRequest().body("User already exists.");
+	            }
+
+	            userservice.insertUser(newUser);
+
+
+	            return ResponseEntity.ok("User created successfully");
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating the user.");
+	        }
+	    }
+	 
 
 }

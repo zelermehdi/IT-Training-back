@@ -1,14 +1,19 @@
 package com.fil.rouge.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
+
+
 @Entity
 @Table(name = "formations")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
 public class Formation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,12 +40,13 @@ public class Formation {
     private String prerequis;
 
     @ManyToOne
-    @JoinColumn(name = "theme_id") 
+    @JoinColumn(name = "theme_id")
     private Theme theme;
 
-    @JsonManagedReference
+  
     @OneToMany(mappedBy = "formation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SessionFormation> sessions;
+    private List<Session> sessions;
+
 
     public Formation() {
     }
@@ -110,11 +116,12 @@ public class Formation {
         this.theme = theme;
     }
 
-    public List<SessionFormation> getSessions() {
+    public List<Session> getSessions() {
         return sessions;
     }
 
-    public void setSessions(List<SessionFormation> sessions) {
+    public void setSessions(List<Session> sessions) {
         this.sessions = sessions;
     }
+    
 }

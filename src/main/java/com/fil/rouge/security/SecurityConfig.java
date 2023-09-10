@@ -48,6 +48,8 @@ public class SecurityConfig {
 				sessionManagement(sa->sa.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.csrf(csrf->csrf.disable())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/login/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/create-user").permitAll())
+
 				.authorizeHttpRequests(ar->ar.anyRequest().authenticated())
 				//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 				.oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))

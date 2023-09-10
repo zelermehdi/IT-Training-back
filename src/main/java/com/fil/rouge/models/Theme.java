@@ -1,7 +1,5 @@
 package com.fil.rouge.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -24,8 +22,7 @@ public class Theme {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "domaine_id") // Utilisez le nom correct de la colonne
-    @JsonIgnoreProperties("themes")
+    @JoinColumn(name = "domaine_id")
     private Domaine domaine;
 
     public Theme() {
@@ -68,4 +65,5 @@ public class Theme {
     public void setDomaine(Domaine domaine) {
         this.domaine = domaine;
     }
+
 }

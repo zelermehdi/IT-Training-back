@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/themes") 
+@RequestMapping("/themes")
 public class ThemeController {
     @Autowired
     private ThemeRepository themeRepository;
@@ -32,12 +33,12 @@ public class ThemeController {
     }
 
     @PostMapping
-    public Theme createTheme(@RequestBody Theme theme) {
+    public Theme createTheme(@Valid @RequestBody Theme theme) {
         return themeRepository.save(theme);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Theme> updateTheme(@PathVariable Long id, @RequestBody Theme updatedTheme) {
+    public ResponseEntity<Theme> updateTheme(@PathVariable Long id, @Valid @RequestBody Theme updatedTheme) {
         Optional<Theme> existingTheme = themeRepository.findById(id);
 
         if (existingTheme.isPresent()) {
@@ -51,17 +52,25 @@ public class ThemeController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTheme(@PathVariable Long id) {
-        themeRepository.deleteById(id);
+    public ResponseEntity<?> deleteTheme(@PathVariable Long id) {
+        Optional<Theme> theme = themeRepository.findById(id);
+
+        if (theme.isPresent()) {
+            themeRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
     
     @GetMapping("/{id}/themes")
     public ResponseEntity<Theme> getThemeWithSousThemes(@PathVariable Long id) {
-        Optional<Theme> theme = themeRepository.findById(id);
+        Optional<Theme> themeOptional = themeRepository.findById(id);
 
-        if (theme.isPresent()) {
-            Theme themeWithSousThemes = theme.get();
-            return ResponseEntity.ok(themeWithSousThemes);
+        if (themeOptional.isPresent()) {
+            Theme theme = themeOptional.get();
+            
+            return ResponseEntity.ok(theme);
         } else {
             return ResponseEntity.notFound().build();
         }

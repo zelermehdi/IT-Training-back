@@ -1,21 +1,29 @@
 
 package com.fil.rouge.controllers;
 
+
+
+import com.fil.rouge.models.Formation;
+import com.fil.rouge.Repository.FormationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.fil.rouge.Repository.FormationRepository;
-import com.fil.rouge.models.Formation;
-import com.fil.rouge.models.SessionFormation;
-
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/formations")
+@RequestMapping("/api/formations")
 public class FormationController {
+
+    private final FormationRepository formationRepository;
+
     @Autowired
-    private FormationRepository formationRepository;
+    public FormationController(FormationRepository formationRepository) {
+        this.formationRepository = formationRepository;
+    }
 
     @GetMapping
     public List<Formation> getAllFormations() {
@@ -24,60 +32,36 @@ public class FormationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Formation> getFormationById(@PathVariable Long id) {
-        Formation formation = formationRepository.findById(id).orElse(null);
-
-        if (formation == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(formation);
-    }
-
-    @GetMapping("/{id}/formation-avec-sessions")
-    public ResponseEntity<Formation> getFormationWithSessions(@PathVariable Long id) {
-        Formation formation = formationRepository.findById(id).orElse(null);
-
-        if (formation == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(formation);
+        Optional<Formation> formation = formationRepository.findById(id);
+        return formation.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public Formation createFormation(@RequestBody Formation formation) {
-        return formationRepository.save(formation);
+    public ResponseEntity<Formation> createFormation(@Valid @RequestBody Formation formation) {
+        Formation savedFormation = formationRepository.save(formation);
+        return new ResponseEntity<>(savedFormation, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public Formation updateFormation(@PathVariable Long id, @RequestBody Formation updatedFormation) {
-        Formation existingFormation = formationRepository.findById(id).orElse(null);
-        if (existingFormation != null) {
-            existingFormation.setNom(updatedFormation.getNom());
-            existingFormation.setDescription(updatedFormation.getDescription());
-            existingFormation.setPrix(updatedFormation.getPrix());
-            existingFormation.setDuree(updatedFormation.getDuree());
-            existingFormation.setPrerequis(updatedFormation.getPrerequis());
-            return formationRepository.save(existingFormation);
+    public ResponseEntity<Formation> updateFormation(@PathVariable Long id, @Valid @RequestBody Formation updatedFormation) {
+        Optional<Formation> formation = formationRepository.findById(id);
+        if (formation.isPresent()) {
+            updatedFormation.setId(id);
+            Formation savedFormation = formationRepository.save(updatedFormation);
+            return new ResponseEntity<>(savedFormation, HttpStatus.OK);
         } else {
-            return null;
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{id}")
-    public void deleteFormation(@PathVariable Long id) {
-        formationRepository.deleteById(id);
-    }
-
-    @GetMapping("/{id}/sessions")
-    public ResponseEntity<List<SessionFormation>> getSessionsByFormation(@PathVariable Long id) {
-        Formation formation = formationRepository.findById(id).orElse(null);
-
-        if (formation == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteFormation(@PathVariable Long id) {
+        Optional<Formation> formation = formationRepository.findById(id);
+        if (formation.isPresent()) {
+            formationRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        List<SessionFormation> sessions = formation.getSessions();
-        return ResponseEntity.ok(sessions);
     }
 }
