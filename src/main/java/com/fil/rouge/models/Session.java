@@ -6,7 +6,6 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 
 @Table(name = "sessions")
 public class Session {
@@ -45,13 +44,13 @@ public class Session {
     }
 
     public Session(Formation formation, Date dateDebut, Date dateFin, Centre centre, int nombreParticipants,
-                   String statut, Formateur formateur, boolean remote) {
+                   String type, Formateur formateur, boolean remote) {
         this.formation = formation;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.centre = centre;
         this.nombreParticipants = nombreParticipants;
-        this.type = statut;
+        this.type = type;
         this.formateur = formateur;
         this.remote = remote;
     }
@@ -104,12 +103,12 @@ public class Session {
         this.nombreParticipants = nombreParticipants;
     }
 
-    public String getStatut() {
+    public String getType() {
         return type;
     }
 
-    public void setStatut(String statut) {
-        this.type = statut;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Formateur getFormateur() {

@@ -7,4 +7,5 @@ import com.fil.rouge.models.Ville;
 
 @Repository
 public interface VilleRepository extends JpaRepository<Ville, Long> {
+	Ville findByNomAndCodePostal(String nom, String codePostal);
 }

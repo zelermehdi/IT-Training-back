@@ -39,6 +39,10 @@ public class VilleController {
 
     @PostMapping
     public ResponseEntity<Ville> createVille(@RequestBody Ville ville) {
+        Ville existingVille = villeRepository.findByNomAndCodePostal(ville.getNom(), ville.getCodePostal());
+        if (existingVille != null) {
+            return ResponseEntity.ok(existingVille);
+        }
         Ville savedVille = villeRepository.save(ville);
         return ResponseEntity.ok(savedVille);
     }

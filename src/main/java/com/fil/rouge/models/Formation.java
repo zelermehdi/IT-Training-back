@@ -2,6 +2,7 @@ package com.fil.rouge.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +13,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "formations")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 
 public class Formation {
     @Id
@@ -43,7 +43,7 @@ public class Formation {
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
-  
+  @JsonIgnore
     @OneToMany(mappedBy = "formation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Session> sessions;
 

@@ -8,12 +8,21 @@ import java.io.Serializable;
 @Entity
 @Table(name = "user")
 public class User extends AppUser implements Serializable {
-    private String nom;
-    private String prenom;
-    private String telephone;
+    protected String nom;
+    protected String prenom;
+    protected String telephone;
 
     
-    @Column(name = "adresse_id")
+    public User(String nom, String prenom, String telephone, int adresseId, String securiteSociale) {
+		super();
+		this.nom = nom;
+		this.prenom = prenom;
+		this.telephone = telephone;
+		this.adresseId = adresseId;
+		this.securiteSociale = securiteSociale;
+	}
+
+	@Column(name = "adresse_id")
     private int adresseId;
 
     @Column(name = "securite_sociale")

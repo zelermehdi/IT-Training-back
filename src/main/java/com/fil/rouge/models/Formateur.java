@@ -16,6 +16,7 @@ public class Formateur extends User {
     )
     private List<Centre> centres;
 
+  
     public Formateur() {
     }
 
@@ -24,7 +25,13 @@ public class Formateur extends User {
         this.centres = centres;
     }
 
-    public String getSiret() {
+    
+    public Formateur(String nom, String prenom, String telephone, int adresseId, String securiteSociale) {
+		super(nom, prenom, telephone, adresseId, securiteSociale);
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getSiret() {
         return siret;
     }
 

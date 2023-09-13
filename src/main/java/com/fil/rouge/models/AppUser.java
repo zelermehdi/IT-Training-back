@@ -10,13 +10,13 @@ import java.util.List;
 public class AppUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idUser;
+    protected int idUser;
 
-    private String username;
-    private String password;
+    protected String username;
+    protected String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private List<AppRole> listRoles = new ArrayList<>();
+    protected List<AppRole> listRoles = new ArrayList<>();
 
 	public AppUser() {
 		super();
