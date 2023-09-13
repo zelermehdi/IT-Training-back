@@ -1,11 +1,16 @@
 package com.fil.rouge.services;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fil.rouge.models.AppRole;
+import com.fil.rouge.models.Formateur;
 import com.fil.rouge.models.User;
 import jakarta.transaction.Transactional;
+
+import com.fil.rouge.Repository.FormateurRepository;
 import com.fil.rouge.Repository.UserRepository;
 
 @Transactional
@@ -17,13 +22,16 @@ public class Userservice {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private FormateurRepository formateurRepository;
 
-    public void insertUser(User newUser) {
+    public User insertUser(User newUser) {
         String pwd = newUser.getPassword();
         String pwdCrypter = this.passwordEncoder.encode(pwd);
         newUser.setPassword(pwdCrypter);
 
-        this.userRepository.save(newUser);
+        return this.userRepository.save(newUser);
     }
 
     public void insertRole(AppRole appRole) {
@@ -41,5 +49,11 @@ public class Userservice {
         newUser.setPassword(encodedPassword);
 
         userRepository.save(newUser);
+    }
+
+   
+
+    public List<Formateur> getAllFormateurs() {
+        return formateurRepository.findAll();
     }
 }
