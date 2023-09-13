@@ -33,7 +33,7 @@ public class Session {
     @Column(name = "nombre_participants")
     private int nombreParticipants;
 
-    private String statut;
+    private String type;
 
     @ManyToOne
     @JoinColumn(name = "formateur_id")
@@ -51,7 +51,7 @@ public class Session {
         this.dateFin = dateFin;
         this.centre = centre;
         this.nombreParticipants = nombreParticipants;
-        this.statut = statut;
+        this.type = statut;
         this.formateur = formateur;
         this.remote = remote;
     }
@@ -105,11 +105,11 @@ public class Session {
     }
 
     public String getStatut() {
-        return statut;
+        return type;
     }
 
     public void setStatut(String statut) {
-        this.statut = statut;
+        this.type = statut;
     }
 
     public Formateur getFormateur() {

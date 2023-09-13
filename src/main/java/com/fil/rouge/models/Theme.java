@@ -66,4 +66,13 @@ public class Theme {
         this.domaine = domaine;
     }
 
+    @Override
+    public String toString() {
+        return "Theme{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", description='" + description + '\'' +
+                ", domaine=" + domaine +
+                '}';
+    }
 }

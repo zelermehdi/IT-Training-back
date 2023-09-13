@@ -47,7 +47,6 @@ public class AdresseController {
         if (existingAdresse != null) {
             existingAdresse.setNumero(updatedAdresse.getNumero());
             existingAdresse.setAdresse(updatedAdresse.getAdresse());
-            existingAdresse.setCodePostal(updatedAdresse.getCodePostal());
             existingAdresse.setVille(updatedAdresse.getVille());
 
             return ResponseEntity.ok(adresseRepository.save(existingAdresse));

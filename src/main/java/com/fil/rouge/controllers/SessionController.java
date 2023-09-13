@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/sessions")
+@RequestMapping("/sessions")
 public class SessionController {
 
     private final SessionRepository sessionRepository;

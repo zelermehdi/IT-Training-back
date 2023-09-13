@@ -1,5 +1,6 @@
 package com.fil.rouge.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
@@ -24,7 +25,7 @@ public class Domaine {
     @Column(name = "description", length = 1000)
     private String description;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "domaine", cascade = CascadeType.ALL)
     private List<Theme> themes;
 

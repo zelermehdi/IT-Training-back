@@ -48,6 +48,7 @@ public class VilleController {
         Ville existingVille = villeRepository.findById(id).orElse(null);
         if (existingVille != null) {
             existingVille.setNom(updatedVille.getNom());
+            existingVille.setCodePostal(existingVille.getCodePostal());
             existingVille.setLat(updatedVille.getLat());
             existingVille.setLon(updatedVille.getLon());
 

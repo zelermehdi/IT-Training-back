@@ -9,6 +9,7 @@ public class Ville {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nom;
+    private String codePostal;
     private double lat;
     private double lon;
 
@@ -35,6 +36,14 @@ public class Ville {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public String getCodePostal() {
+        return codePostal;
+    }
+
+    public void setCodePostal(String codePostal) {
+        this.codePostal = codePostal;
     }
 
     public double getLat() {

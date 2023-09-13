@@ -11,7 +11,6 @@ public class Adresse {
 
     private String numero; 
     private String adresse;
-    private String codePostal;
 
     @ManyToOne
     @JoinColumn(name = "ville_id")
@@ -20,10 +19,9 @@ public class Adresse {
     public Adresse() {
     }
 
-    public Adresse(String numero, String adresse, String codePostal, Ville ville) {
+    public Adresse(String numero, String adresse, Ville ville) {
         this.numero = numero;
         this.adresse = adresse;
-        this.codePostal = codePostal;
         this.ville = ville;
     }
 
@@ -49,14 +47,6 @@ public class Adresse {
 
     public void setAdresse(String adresse) {
         this.adresse = adresse;
-    }
-
-    public String getCodePostal() {
-        return codePostal;
-    }
-
-    public void setCodePostal(String codePostal) {
-        this.codePostal = codePostal;
     }
 
     public Ville getVille() {

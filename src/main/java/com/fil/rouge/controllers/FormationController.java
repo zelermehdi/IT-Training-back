@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/formations")
+@RequestMapping("/formations")
 public class FormationController {
 
     private final FormationRepository formationRepository;
