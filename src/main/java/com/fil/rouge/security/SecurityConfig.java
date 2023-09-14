@@ -50,6 +50,7 @@ public class SecurityConfig {
 				.csrf(csrf->csrf.disable())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/login/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/create-user").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/profil/**").permitAll())
 
 				.authorizeHttpRequests(ar->ar.anyRequest().authenticated())
 				//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

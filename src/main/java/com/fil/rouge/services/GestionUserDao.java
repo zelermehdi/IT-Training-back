@@ -49,20 +49,28 @@ public class GestionUserDao {
 		this.roleRepository.save(appRole);
 	}
 
-	public void addRoleToUser(AppRole appRole, AppUser appUser) {
-		AppRole role = this.roleRepository.getById(appRole.getIdRole());
-		AppUser user = this.userRepository.getById(appUser.getId());
+	/*
+	 * public void addRoleToUser(AppRole appRole, AppUser appUser) { AppRole role =
+	 * this.roleRepository.getById(appRole.getIdRole()); AppUser user =
+	 * this.userRepository.getById(appUser.getId());
+	 * 
+	 * user.getListRoles().add(role); }
+	 */
+	public void addRoleToUser(String appRole, String appUser) {
+		AppRole role = this.roleRepository.findRoleByRole(appRole);
+		AppUser user = this.userRepository.findUserByUsername(appUser);
 
 		user.getListRoles().add(role);
 	}
-
+	
 	public AppUser findUserByUsername(String username) {
 		return this.userRepository.findUserByUsername(username);
 	}
-	/*
-	 * public AppRole findRoleByRole(String role) { return
-	 * this.roleRepository.findRoleByRole(role); }
-	 */
+	
+	  public AppRole findRoleByRole(String role) { 
+		  return this.roleRepository.findRoleByRole(role);
+		  }
+	 
 
 	public void createUser(AppUser newUser) {
 	    // 1. Encodez le mot de passe de l'utilisateur

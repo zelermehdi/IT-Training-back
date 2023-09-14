@@ -16,11 +16,13 @@ import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fil.rouge.models.AppRole;
 import com.fil.rouge.models.AppUser;
 import com.fil.rouge.models.Candidat;
 import com.fil.rouge.models.User;
@@ -38,39 +40,113 @@ public class SecurityController {
 	    private GestionUserDao gestionUserDao;
 	 @Autowired
 	 private Userservice userservice;
+	 
+	 @GetMapping("/profil")
+	 public Authentication  authentication(Authentication authentication) {
+		 return authentication;
+	 }
+	 
+	 @PostMapping("/add-role-user")
+	    public ResponseEntity<String> addRoleToUser(@RequestBody UserRole userRole) {
+	        try {
+	        	//
+	        	
+	        	this.gestionUserDao.addRoleToUser(userRole.appRole.getRole(), userRole.appUser.getUsername());
+
+	            return ResponseEntity.ok("Utilisateur créé avec succès");
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
+	        }
+	    }
 	
-	@PostMapping("/login")
-	public Map<String, String> login(String username,String password){
-	//1-	on authentifie un user	
-		Authentication authentication =	authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-	//2-	on crée le jeton
-		Instant instant = Instant.now();
-		
-	//3-	on récupère les rôle
-		String scope =authentication.getAuthorities().stream().map(a->a.getAuthority()).collect(Collectors.joining(" "));
-	//4-	
-		JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
-									.issuedAt(instant)
-									.expiresAt(instant.plus(10080,ChronoUnit.MINUTES))
-									.subject(username)
-									.claim("scope", scope)
-									.build();
-		//5- Création du tokem		
-		JwtEncoderParameters jwtEncoderParameters =
-			JwtEncoderParameters.from(
-					JwsHeader.with(MacAlgorithm.HS512).build(),
-					jwtClaimsSet
-					);
-		//Jwt jwt = jwtEncoder.encode(jwtEncoderParameters);
-		String jwt  = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
+	  @PostMapping("/login")
+	    public ResponseEntity<UserInfo> login(@RequestBody Map<String, String> loginRequest) {
+	        String username = loginRequest.get("username");
+	        String password = loginRequest.get("password");
+
+	        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
+	        String roles = authentication.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.joining(","));
+
+	        UserInfo userInfo = new UserInfo();
+	        userInfo.setUsername(username);
+	        userInfo.setRoles(roles);
+
+	        Instant instant = Instant.now();
+	        JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
+	                .issuedAt(instant)
+	                .expiresAt(instant.plus(10080, ChronoUnit.MINUTES))
+	                .subject(username)
+	                .claim("scope", roles)
+	                .build();
+
+	        JwtEncoderParameters jwtEncoderParameters =
+	                JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS512).build(), jwtClaimsSet);
+
+	        String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
+
+	        userInfo.setAccessToken(jwt);
+
+	        return ResponseEntity.ok(userInfo);
+	    }
 	
-		return Map.of("access-token",jwt);
+
+	class UserInfo {
+	    private String username;
+	    private String roles;
+	    private String accessToken;
+
+	    public String getUsername() {
+	        return username;
+	    }
+
+	    public void setUsername(String username) {
+	        this.username = username;
+	    }
+
+	    public String getRoles() {
+	        return roles;
+	    }
+
+	    public void setRoles(String roles) {
+	        this.roles = roles;
+	    }
+
+	    public String getAccessToken() {
+	        return accessToken;
+	    }
+
+	    public void setAccessToken(String accessToken) {
+	        this.accessToken = accessToken;
+	    }
+	
 	}
+	
+	 @PostMapping("/create-role")
+	    public ResponseEntity<String> createRole(@RequestBody AppRole newRole) {
+	        try {
+	            AppRole existingRole = this.gestionUserDao.findRoleByRole(newRole.getRole());
+	            
+	            if (existingRole != null) {
+	            	
+	                return ResponseEntity.badRequest().body("Le Role existe déjà.");
+	            }else {
+		            this.gestionUserDao.insertRole(newRole);
+		  
+		            return ResponseEntity.ok("Utilisateur créé avec succès");
+	            }
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
+	        }
+	    }
+	
+
 	 @PostMapping("/create-user")
 	    public ResponseEntity<String> createUser(@RequestBody User newUser) {
 	        try {
 	            User existingUser = userservice.findUserByUsername(newUser.getUsername());
 	            if (existingUser != null) {
+	            	
 	                return ResponseEntity.badRequest().body("L'utilisateur existe déjà.");
 	            }
 
@@ -82,6 +158,8 @@ public class SecurityController {
 	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
 	        }
 	    }
-	 
-
+}
+class UserRole{
+	public AppRole appRole;
+	public AppUser appUser;
 }
