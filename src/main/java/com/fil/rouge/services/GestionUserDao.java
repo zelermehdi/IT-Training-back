@@ -51,7 +51,7 @@ public class GestionUserDao {
 
 	public void addRoleToUser(AppRole appRole, AppUser appUser) {
 		AppRole role = this.roleRepository.getById(appRole.getIdRole());
-		AppUser user = this.userRepository.getById(appUser.getIdUser());
+		AppUser user = this.userRepository.getById(appUser.getId());
 
 		user.getListRoles().add(role);
 	}

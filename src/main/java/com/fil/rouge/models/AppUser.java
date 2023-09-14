@@ -10,7 +10,7 @@ import java.util.List;
 public class AppUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected int idUser;
+    protected int id;
 
     protected String username;
     protected String password;
@@ -23,12 +23,12 @@ public class AppUser implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public int getIdUser() {
-		return idUser;
+	public int getId() {
+		return id;
 	}
 
-	public void setIdUser(int idUser) {
-		this.idUser = idUser;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getUsername() {
@@ -55,9 +55,9 @@ public class AppUser implements Serializable {
 		this.listRoles = listRoles;
 	}
 
-	public AppUser(int idUser, String username, String password, List<AppRole> listRoles) {
+	public AppUser(int id, String username, String password, List<AppRole> listRoles) {
 		super();
-		this.idUser = idUser;
+		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.listRoles = listRoles;
