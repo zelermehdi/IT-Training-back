@@ -6,10 +6,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fil.rouge.models.AppRole;
+import com.fil.rouge.models.Candidat;
 import com.fil.rouge.models.Formateur;
 import com.fil.rouge.models.User;
 import jakarta.transaction.Transactional;
 
+import com.fil.rouge.Repository.CandidatRepository;
 import com.fil.rouge.Repository.FormateurRepository;
 import com.fil.rouge.Repository.UserRepository;
 
@@ -25,6 +27,9 @@ public class Userservice {
     
     @Autowired
     private FormateurRepository formateurRepository;
+    
+    @Autowired
+    private CandidatRepository candidatRepository;
 
     public User insertUser(User newUser) {
         String pwd = newUser.getPassword();
@@ -55,5 +60,8 @@ public class Userservice {
 
     public List<Formateur> getAllFormateurs() {
         return formateurRepository.findAll();
+    }
+    public List<Candidat> getAllCandidats() {
+        return candidatRepository.findAll();
     }
 }
