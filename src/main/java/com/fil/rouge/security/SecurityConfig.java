@@ -55,10 +55,10 @@ public class SecurityConfig {
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/create-user").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/profil/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/adresses/**").hasAnyAuthority("SCOPE_ROLE_ADMIN"))
-				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/sesssion/**").permitAll())
-				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/formation/**").permitAll())
-				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/theme/**").permitAll())
-				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/Domaine/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/sesssions/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/formations/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/themes/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/Domaines/**").permitAll())
 
 				.authorizeHttpRequests(ar->ar.anyRequest().authenticated())
 				//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
@@ -66,6 +66,11 @@ public class SecurityConfig {
 				.userDetailsService(userDetailsService)
 				.build();
 	}
+	
+	
+	
+	
+	
 	@Bean
 	JwtEncoder jwtEncoder() {
 		String secretKey ="123s456dfghj456987ertyuiopm214qsdfghjklmnbv321654qwxertyuio9783k";
