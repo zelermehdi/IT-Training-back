@@ -6,12 +6,16 @@ import com.fil.rouge.models.Adresse;
 import com.fil.rouge.Repository.AdresseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+
 @RequestMapping("/adresses")
+
 public class AdresseController {
 
     private final AdresseRepository adresseRepository;
@@ -20,8 +24,11 @@ public class AdresseController {
     public AdresseController(AdresseRepository adresseRepository) {
         this.adresseRepository = adresseRepository;
     }
+    
 
     @GetMapping
+
+
     public List<Adresse> getAllAdresses() {
         return adresseRepository.findAll();
     }

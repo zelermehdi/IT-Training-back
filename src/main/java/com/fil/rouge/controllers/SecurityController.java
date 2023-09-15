@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.fil.rouge.models.AppRole;
 import com.fil.rouge.models.AppUser;
@@ -32,134 +34,127 @@ import com.fil.rouge.services.Userservice;
 @RestController
 @RequestMapping("/auth")
 public class SecurityController {
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	@Autowired
-	private JwtEncoder jwtEncoder;
-	 @Autowired
-	    private GestionUserDao gestionUserDao;
-	 @Autowired
-	 private Userservice userservice;
-	 
-	 @GetMapping("/profil")
-	 public Authentication  authentication(Authentication authentication) {
-		 return authentication;
-	 }
-	 
-	 @PostMapping("/add-role-user")
-	    public ResponseEntity<String> addRoleToUser(@RequestBody UserRole userRole) {
-	        try {
-	        	//
-	        	
-	        	this.gestionUserDao.addRoleToUser(userRole.appRole.getRole(), userRole.appUser.getUsername());
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtEncoder jwtEncoder;
+    @Autowired
+    private GestionUserDao gestionUserDao;
+    @Autowired
+    private Userservice userservice;
 
-	            return ResponseEntity.ok("Utilisateur créé avec succès");
-	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
-	        }
-	    }
-	
-	  @PostMapping("/login")
-	    public ResponseEntity<UserInfo> login(@RequestBody Map<String, String> loginRequest) {
-	        String username = loginRequest.get("username");
-	        String password = loginRequest.get("password");
+    @GetMapping("/profil")
+    public Authentication authentication(Authentication authentication) {
+        return authentication;
+    }
 
-	        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+    @PostMapping("/add-role-user")
+    public ResponseEntity<String> addRoleToUser(@RequestBody UserRole userRole) {
+        try {
+            this.gestionUserDao.addRoleToUser(userRole.appRole.getRole(), userRole.appUser.getUsername());
+            return ResponseEntity.ok("Utilisateur créé avec succès");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
+        }
+    }
 
-	        String roles = authentication.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.joining(","));
+   
 
-	        UserInfo userInfo = new UserInfo();
-	        userInfo.setUsername(username);
-	        userInfo.setRoles(roles);
+    @PostMapping("/login")
+    public ResponseEntity<UserInfo> login(@RequestBody Map<String, String> loginRequest) {
+        String username = loginRequest.get("username");
+        String password = loginRequest.get("password");
 
-	        Instant instant = Instant.now();
-	        JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
-	                .issuedAt(instant)
-	                .expiresAt(instant.plus(10080, ChronoUnit.MINUTES))
-	                .subject(username)
-	                .claim("scope", roles)
-	                .build();
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-	        JwtEncoderParameters jwtEncoderParameters =
-	                JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS512).build(), jwtClaimsSet);
+        String roles = authentication.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.joining(","));
 
-	        String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUsername(username);
+        userInfo.setRoles(roles);
 
-	        userInfo.setAccessToken(jwt);
+        Instant instant = Instant.now();
+        JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
+                .issuedAt(instant)
+                .expiresAt(instant.plus(10080, ChronoUnit.MINUTES))
+                .subject(username)
+                .claim("scope", roles)
+                .build();
 
-	        return ResponseEntity.ok(userInfo);
-	    }
-	
+        JwtEncoderParameters jwtEncoderParameters =
+                JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS512).build(), jwtClaimsSet);
 
-	class UserInfo {
-	    private String username;
-	    private String roles;
-	    private String accessToken;
+        String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
 
-	    public String getUsername() {
-	        return username;
-	    }
+        userInfo.setAccessToken(jwt);
 
-	    public void setUsername(String username) {
-	        this.username = username;
-	    }
+        return ResponseEntity.ok(userInfo);
+    }
 
-	    public String getRoles() {
-	        return roles;
-	    }
+    class UserInfo {
+        private String username;
+        private String roles;
+        private String accessToken;
 
-	    public void setRoles(String roles) {
-	        this.roles = roles;
-	    }
+        public String getUsername() {
+            return username;
+        }
 
-	    public String getAccessToken() {
-	        return accessToken;
-	    }
+        public void setUsername(String username) {
+            this.username = username;
+        }
 
-	    public void setAccessToken(String accessToken) {
-	        this.accessToken = accessToken;
-	    }
-	
-	}
-	
-	 @PostMapping("/create-role")
-	    public ResponseEntity<String> createRole(@RequestBody AppRole newRole) {
-	        try {
-	            AppRole existingRole = this.gestionUserDao.findRoleByRole(newRole.getRole());
-	            
-	            if (existingRole != null) {
-	            	
-	                return ResponseEntity.badRequest().body("Le Role existe déjà.");
-	            }else {
-		            this.gestionUserDao.insertRole(newRole);
-		  
-		            return ResponseEntity.ok("Utilisateur créé avec succès");
-	            }
-	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
-	        }
-	    }
-	
+        public String getRoles() {
+            return roles;
+        }
 
-	 @PostMapping("/create-user")
-	    public ResponseEntity<String> createUser(@RequestBody User newUser) {
-	        try {
-	            User existingUser = userservice.findUserByUsername(newUser.getUsername());
-	            if (existingUser != null) {
-	            	
-	                return ResponseEntity.badRequest().body("L'utilisateur existe déjà.");
-	            }
+        public void setRoles(String roles) {
+            this.roles = roles;
+        }
 
-	            userservice.insertUser(newUser);
+        public String getAccessToken() {
+            return accessToken;
+        }
 
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+        }
+    }
 
-	            return ResponseEntity.ok("Utilisateur créé avec succès");
-	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
-	        }
-	    }
+    @PostMapping("/create-role")
+    public ResponseEntity<String> createRole(@RequestBody AppRole newRole) {
+        try {
+            AppRole existingRole = this.gestionUserDao.findRoleByRole(newRole.getRole());
+
+            if (existingRole != null) {
+                return ResponseEntity.badRequest().body("Le Role existe déjà.");
+            } else {
+                this.gestionUserDao.insertRole(newRole);
+                return ResponseEntity.ok("Utilisateur créé avec succès");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la création de l'utilisateur.");
+        }
+    }
+
+    @PostMapping("/create-user")
+    public ResponseEntity<User> createUser(@RequestBody User newUser) {
+        try {
+            User existingUser = userservice.findUserByUsername(newUser.getUsername());
+            if (existingUser != null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'utilisateur existe déjà.");
+            }
+
+            User createdUser = userservice.insertUser(newUser);
+
+            return ResponseEntity.ok(createdUser);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la création de l'utilisateur.", e);
+        }
+    }
 }
-class UserRole{
-	public AppRole appRole;
-	public AppUser appUser;
+
+class UserRole {
+    public AppRole appRole;
+    public AppUser appUser;
 }

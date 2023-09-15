@@ -7,10 +7,12 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -33,6 +35,7 @@ import com.fil.rouge.Repository.AppUserRepository;
 
 @Configuration
 @EnableWebSecurity
+
 public class SecurityConfig {
 	
 	@Autowired
@@ -51,6 +54,11 @@ public class SecurityConfig {
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/login/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/create-user").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/profil/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers("/adresses/**").hasAnyAuthority("SCOPE_ROLE_ADMIN"))
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/sesssion/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/formation/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/theme/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/Domaine/**").permitAll())
 
 				.authorizeHttpRequests(ar->ar.anyRequest().authenticated())
 				//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

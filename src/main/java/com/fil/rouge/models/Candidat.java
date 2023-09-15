@@ -1,6 +1,5 @@
 package com.fil.rouge.models;
 
-
 import jakarta.persistence.*;
 import java.util.Objects;
 
@@ -10,15 +9,15 @@ public class Candidat extends User {
     private String identifiantPoleEmploi;
 
     @ManyToOne
-    @JoinColumn(name = "centre_id")
-    private Centre centre;
+    @JoinColumn(name = "session_id") 
+    private Session session;
 
     public Candidat() {
     }
 
-    public Candidat(String identifiantPoleEmploi, Centre centre) {
+    public Candidat(String identifiantPoleEmploi, Session session) {
         this.identifiantPoleEmploi = identifiantPoleEmploi;
-        this.centre = centre;
+        this.session = session;
     }
 
     public String getIdentifiantPoleEmploi() {
@@ -29,12 +28,12 @@ public class Candidat extends User {
         this.identifiantPoleEmploi = identifiantPoleEmploi;
     }
 
-    public Centre getCentre() {
-        return centre;
+    public Session getSession() {
+        return session;
     }
 
-    public void setCentre(Centre centre) {
-        this.centre = centre;
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     @Override
@@ -43,11 +42,11 @@ public class Candidat extends User {
         if (o == null || getClass() != o.getClass()) return false;
         Candidat candidat = (Candidat) o;
         return Objects.equals(identifiantPoleEmploi, candidat.identifiantPoleEmploi) &&
-                Objects.equals(centre, candidat.centre);
+                Objects.equals(session, candidat.session);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifiantPoleEmploi, centre);
+        return Objects.hash(identifiantPoleEmploi, session);
     }
 }

@@ -2,11 +2,12 @@ package com.fil.rouge.models;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-@Entity
 
+@Entity
 @Table(name = "sessions")
 public class Session {
     @Id
@@ -25,6 +26,8 @@ public class Session {
     @Column(name = "date_fin")
     private Date dateFin;
 
+    private int duree;
+
     @ManyToOne
     @JoinColumn(name = "centre_id")
     private Centre centre;
@@ -40,19 +43,26 @@ public class Session {
 
     private boolean remote;
 
+    private int prix;
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Candidat> candidats;
+
     public Session() {
     }
 
-    public Session(Formation formation, Date dateDebut, Date dateFin, Centre centre, int nombreParticipants,
-                   String type, Formateur formateur, boolean remote) {
+    public Session(Formation formation, Date dateDebut, Date dateFin, int duree, Centre centre, int nombreParticipants,
+                   String type, Formateur formateur, boolean remote, int prix) {
         this.formation = formation;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
+        this.duree = duree;
         this.centre = centre;
         this.nombreParticipants = nombreParticipants;
         this.type = type;
         this.formateur = formateur;
         this.remote = remote;
+        this.prix = prix;
     }
 
     public Long getId() {
@@ -85,6 +95,14 @@ public class Session {
 
     public void setDateFin(Date dateFin) {
         this.dateFin = dateFin;
+    }
+
+    public int getDuree() {
+        return duree;
+    }
+
+    public void setDuree(int duree) {
+        this.duree = duree;
     }
 
     public Centre getCentre() {
@@ -127,5 +145,29 @@ public class Session {
         this.remote = remote;
     }
 
-    // Autres getters et setters
+    public int getPrix() {
+        return prix;
+    }
+
+    public void setPrix(int prix) {
+        this.prix = prix;
+    }
+
+    public List<Candidat> getCandidats() {
+        return candidats;
+    }
+
+    public void setCandidats(List<Candidat> candidats) {
+        this.candidats = candidats;
+    }
+
+    public void addCandidat(Candidat candidat) {
+        candidats.add(candidat);
+        candidat.setSession(this);
+    }
+
+    public void removeCandidat(Candidat candidat) {
+        candidats.remove(candidat);
+        candidat.setSession(null);
+    }
 }
