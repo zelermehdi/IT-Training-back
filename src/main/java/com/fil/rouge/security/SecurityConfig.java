@@ -54,11 +54,13 @@ public class SecurityConfig {
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/login/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/create-user").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/profil/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers("/candidats/**").permitAll())
+
 				.authorizeHttpRequests(ar->ar.requestMatchers("/adresses/**").hasAnyAuthority("SCOPE_ROLE_ADMIN"))
-				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/sesssions/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/sessions/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/formations/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/themes/**").permitAll())
-				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/Domaines/**").permitAll())
+				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/domaines/**").permitAll())
 
 				.authorizeHttpRequests(ar->ar.anyRequest().authenticated())
 				//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

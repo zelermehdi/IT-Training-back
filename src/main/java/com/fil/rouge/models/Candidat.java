@@ -11,7 +11,8 @@ public class Candidat extends User {
     @ManyToOne
     @JoinColumn(name = "session_id") 
     private Session session;
-
+    @Column(name = "validate")
+    private boolean validate = false;
     public Candidat() {
     }
 
@@ -34,6 +35,11 @@ public class Candidat extends User {
 
     public void setSession(Session session) {
         this.session = session;
+    }
+
+
+    public void setValidate(boolean validate) {
+        this.validate = validate;
     }
 
     @Override

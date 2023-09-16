@@ -64,4 +64,22 @@ public class Userservice {
     public List<Candidat> getAllCandidats() {
         return candidatRepository.findAll();
     }
+    
+    public Candidat convertToCandidat(User existingUser) {
+        Candidat candidat = new Candidat();
+        candidat.setUsername(existingUser.getUsername());
+        candidat.setPassword(existingUser.getPassword());
+        candidat.setNom(existingUser.getNom());
+        candidat.setPrenom(existingUser.getPrenom());
+        candidat.setTelephone(existingUser.getTelephone());
+
+        candidat.setValidate(false);
+
+        candidatRepository.save(candidat);
+
+        userRepository.delete(existingUser);
+
+        return candidat;
+    }
+
 }
