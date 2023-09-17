@@ -65,21 +65,11 @@ public class Userservice {
         return candidatRepository.findAll();
     }
     
-    public Candidat convertToCandidat(User existingUser) {
-        Candidat candidat = new Candidat();
-        candidat.setUsername(existingUser.getUsername());
-        candidat.setPassword(existingUser.getPassword());
-        candidat.setNom(existingUser.getNom());
-        candidat.setPrenom(existingUser.getPrenom());
-        candidat.setTelephone(existingUser.getTelephone());
-
-        candidat.setValidate(false);
-
-        candidatRepository.save(candidat);
-
+    public Candidat convertToCandidat(Candidat user) {
+        User existingUser = userRepository.findByUsername(user.getUsername());
+        user.setPassword(existingUser.getPassword());
+        candidatRepository.save(user);
         userRepository.delete(existingUser);
-
-        return candidat;
+        return user;
     }
-
 }

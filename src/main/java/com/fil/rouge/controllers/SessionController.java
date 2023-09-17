@@ -45,6 +45,7 @@ public class SessionController {
         Optional<Session> session = sessionRepository.findById(id);
         if (session.isPresent()) {
             updatedSession.setId(id);
+            updatedSession.setCandidats(sessionRepository.getById(id).getCandidats());
             Session savedSession = sessionRepository.save(updatedSession);
             return new ResponseEntity<>(savedSession, HttpStatus.OK);
         } else {

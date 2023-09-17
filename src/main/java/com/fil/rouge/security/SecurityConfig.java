@@ -56,7 +56,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/profil/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers("/candidats/**").permitAll())
 
-				.authorizeHttpRequests(ar->ar.requestMatchers("/adresses/**").hasAnyAuthority("SCOPE_ROLE_ADMIN"))
+				// .authorizeHttpRequests(ar->ar.requestMatchers("/adresses/**").hasAnyAuthority("SCOPE_ROLE_ADMIN"))
 				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/sessions/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/formations/**").permitAll())
 				.authorizeHttpRequests(ar->ar.requestMatchers(HttpMethod.GET,"/themes/**").permitAll())

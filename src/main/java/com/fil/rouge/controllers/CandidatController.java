@@ -47,21 +47,9 @@ public class CandidatController {
     }
 
     @PostMapping("/convert")
-    public ResponseEntity<String> convertUserToCandidat(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get("username"); // Assurez-vous que la clé correspond au nom d'utilisateur dans le JSON.
-        
-        if (username == null) {
-            return ResponseEntity.badRequest().body("Le champ 'username' est manquant dans le corps de la requête.");
-        }
-
-        User existingUser = userservice.findUserByUsername(username);
-        if (existingUser == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé.");
-        }
-
-        Candidat candidat = userservice.convertToCandidat(existingUser);
-
-        return ResponseEntity.ok("L'utilisateur a été converti en candidat avec succès.");
+    public ResponseEntity<Candidat> convertUserToCandidat(@RequestBody Candidat user) {
+        Candidat candidat = userservice.convertToCandidat(user);
+        return ResponseEntity.ok(candidat);
     }
     
     @PostMapping("/validate")
@@ -82,6 +70,26 @@ public class CandidatController {
         userservice.insertUser(candidat);
 
         return ResponseEntity.ok("Le candidat a été validé avec succès.");
+    }
+
+    @PostMapping("/invalidate")
+    public ResponseEntity<String> invalidateCandidat(@RequestBody Map<String, String> requestBody) {
+        String username = requestBody.get("username");
+
+        if (username == null) {
+            return ResponseEntity.badRequest().body("Le champ 'username' est manquant dans le corps de la requête.");
+        }
+
+        User existingUser = userservice.findUserByUsername(username);
+        if (existingUser == null || !(existingUser instanceof Candidat)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Candidat non trouvé.");
+        }
+
+        Candidat candidat = (Candidat) existingUser;
+        candidat.setValidate(false);
+        userservice.insertUser(candidat);
+
+        return ResponseEntity.ok("Le candidat a été invalidé avec succès.");
     }
 
 
